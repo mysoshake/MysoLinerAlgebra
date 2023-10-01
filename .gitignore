@@ -1,0 +1,3 @@
+# out のうち pdf 以外無視
+/out/*
+!/out/.pdf
