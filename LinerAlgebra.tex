@@ -1,0 +1,406 @@
+% !TEX TS-program = uplatex
+% !TEX encoding = UTF-8 Unicode
+%%% 設定開始 %%%
+% \documentclass{ltjsarticle}
+\documentclass[report]{jlreq}% loads luatexja.sty internally
+
+%%% パッケージ設定
+%%%% 基本
+% スタイル設定
+\usepackage[utf8]{inputenc} % Unicode使用可能
+% \usepackage{csquotes} % 謎に警告が出るから
+% \usepackage[ngerman]{babel} % ドイツ語にする
+\usepackage{luatexja-fontspec} % フォント設定 
+\setmainfont[Ligatures=TeX]{Times New Roman} % フォント設定
+\setmainjfont[BoldFont=MS Gothic]{MS Mincho} % フォント設定
+\usepackage[top=20truemm,bottom=20truemm,left=25truemm,right=20truemm]{geometry} % ページ設定
+
+% 機能系
+\usepackage{amsmath} % 数式サポート
+\usepackage{bm} % 太字 \bm 使用可能
+\usepackage{tcolorbox} % 定理の枠使用可能
+\tcbuselibrary{breakable, skins, theorems} % 定理の枠使用可能
+\usepackage{hyperref} % ハイパーリンク使用可能
+\usepackage{graphicx} % 画像貼り付け使用可能
+\usepackage{listings} % ソースコード使用可能
+\usepackage{enumitem} % 列挙（箇条書き）使用可能
+\usepackage{biblatex} % BIBLaTeX使用可能
+\usepackage{subcaption} % 表の水平配置可能
+\usepackage{physics} % 
+\usepackage{tikzsymbols} % TikZ使用可能
+
+% よく変更するもの
+\pagestyle{headings} % ページ番号を消す {empty, plain, headings, myheadings}
+\bibliography{library}%参考文献の取り込み（library.bibというファイルが存在する場合）
+%
+
+%%%% 追加
+\newcounter{myso}
+\tcbset{
+	mysostyle/.style=
+	{
+		attach boxed title to top left={xshift=-3mm,yshift=-2mm},
+		fonttitle=\bfseries,
+		coltitle=black,
+		colframe=blue,
+		colback=blue!2!white,
+		rightrule=0pt,
+		leftrule=0pt,
+		bottomrule=2pt,
+		colbacktitle=blue!2!white,
+		theorem style=standard,
+		breakable,
+		arc=0pt
+	},
+}
+
+\newtcbtheorem[use counter=myso, number within=section]{mysoaxiom}{公理}{mysostyle}{axiom}
+
+\newtcbtheorem[use counter=myso, number within=section]{mysodef}{定義}{mysostyle,leftrule=5pt,rightrule=5pt}{def}
+
+\newtcbtheorem[use counter=myso, number within=section]{mysothm}{定理}{mysostyle}{thm}
+
+\newtcbtheorem[]{mysoproof}{証明}{mysostyle}{proof}
+
+\newtcbtheorem[use counter=myso, number within=section]{mysocor}{系}{mysostyle}{cor}
+
+\newtcbtheorem[use counter=myso, number within=section]{mysoeg}{例}{mysostyle,bottomrule=0pt}{eg}
+
+\newtcbtheorem[auto counter, number within=section]{mysoegpb}{例題}{mysostyle}{egpb}
+
+\newtcbtheorem[auto counter, number within=section]{mysopb}{問}{mysostyle}{pb}
+
+%%% 設定終了 %%%
+
+%%% ここから本文 %%%
+\begin{document}
+
+%%% 情報 %%%
+\author{MysoShake} 
+\title{線形代数}
+\date{\today}
+%%% 情報終わり %%%
+
+\maketitle{}
+
+\pagebreak{}
+
+\begin{abstract}
+
+線形代数を学ぶ皆さん。はじめまして。 \\
+\\
+\indent ここは飛ばして第１部へ進んでください。 \\
+\\
+\indent  飛ばさずに読んでくれてありがとうございます。新しい知識を得るためにワクワクしているところに水を差してしまうかもしれませんが、少し愚痴を書きます。\\
+
+\indent 概要にみっしりと未知の話をする人の話です。\\
+
+\indent  例えば「行列式」（ぎょうれつしき）だとか「直行空間」（ちょっこうくうかん）だとかについてつらつらと書いているものです。
+実際これは便利で、これから何を学ぶのかについてなんとなくイメージがつかめるのですが、「本当の初学者」にとっては迷惑なものです。
+一体それが何であるのか、何のためにあるものなのか、それを知らずに読んだところでわからないのです。
+概要を読んで理解し、イメージができるのであればそれに越したことはありませんが、筆者にはできません。 \\
+
+\indent そんなわけで、ここに「概要」とついているものの、実際にこの手の書き物をするときには内容を書くべきではないと思っています。\\
+
+\indent だからといって何も書かないのは味気ないので、中高で「ベクトル」（もしかしたら「行列」も）学んできた読者へ向けてイメージを伝えておくことにします。\\
+
+\indent 高校で習うような「ベクトル」は、よく「矢印（有向線分）」とか「向きと大きさを持ったもの」というように教えられることが多いです。
+そのため、線形代数で新しく習う「ベクトル」というものについても、「何か図形に関連する意味をもっている」と考えがちです。
+しかし、実際のところはそんなことはないのです。
+線形代数での「ベクトル」は、もっと（その名前の通り）代数らしいものなのです。
+代数（だいすう）は読者の皆さんが知っている（かもしれない）通り、$2$とか$\sqrt{3}$とかといった「数（すう）」を、$a$とか$X$とかといった「文字」で表したものです。
+つまるところ「数を表すための記号が代数」なのです。
+\\
+
+\indent 代数のいいところは「中身を知らなくても計算結果をあらわせること」です。皆さんは二次方程式の解の公式を知っていると思います。
+あれは、実際の係数の値がわからなくても解を表現できていますよね、これが代数の便利なことの1つです。
+実際は後で計算を行いますが、今大切なのは「解が『あとは計算するだけ』というところまでわかること」です。\\
+
+\indent 話を戻すと、「ベクトル」も実はこのような代数の1つです。
+「実際に中身はわからなくても、計算さえすれば知りたいことがわかる」ということが重要で、その中身がどうなのかはあまり考えないのです。
+違和感があるかもしれませんが、実際にそうなのです。
+中身がさまざまである代数（$\vec{a}$や$A$など）と、可能な演算（足し算や掛け算）を使ってどんなことができるのか。
+これを読んで線形代数の学習に前向きになってもらえたら幸いです。
+\\
+
+\end{abstract}
+
+\tableofcontents{}
+
+\part{第一歩の手前にたどり着くまで}
+\chapter{用語の説明}
+\section{ここで用いられる用語たち}
+数学の本ではいろいろなところで用語が用いられます。
+それらのいくつかは使用方法が曖昧だったりざっくりしています。
+「定義」「定理」「公理」「公準」などは数学の用語として明確な区別を必要とします。
+ここでは次のように使い分けることとします。
+\begin{itemize}
+	\item 公理 \dots 証明せずに用いる前提となる事実です。例えば（知らなくても問題ありませんが）「自然数で、異なる自然数にそれぞれ1を加えても、やはり異なる自然数になること」は公理です。
+	\item 定義 \dots 言葉の意味を決めるものです。公理と似ていると感じるかもしれません。例えば「真」や「偽」という言葉が「何を指すのかを述べること」は真と偽を定義することになります。
+	\item 定理 \dots 公理から証明することが出来ることです。例えば「平行線は交わらない」という公理から「共有点がなく交わらない2直線は平行である」という定理を得ることが出来るかもしれません。
+\end{itemize}
+明確な区別が必要としましたが、公準と公理についてはどちらもまとめて公理と表すことにします。
+理由は「めんどうだから」です。
+
+\chapter{論理の基本}
+\section{論理とは}
+論理学とはそれだけで本が何冊も書かれるほど奥が深い数学の分野です。
+線形代数にたどり着くために少しだけ論理学っぽいことが必要になります。
+私たちに必要な最低限の定義と、いくつかの定理の証明をしましょう。\\
+※以下で行うのは論理学っぽいことです。
+本格的な論理学はむずかしいので書きません。
+
+\paragraph*{真と偽} 
+論理の最小単位である真理値（真偽値ということもあります）を定めます。
+
+\begin{mysodef}{真理値}{truthvalue}
+	記号$\mathrm{T}$のことを\textbf{真（True）}といい、記号$\mathrm{F}$のことを\textbf{偽（False）}という\\
+	$\mathrm{T}$や$\mathrm{F}$を\textbf{真理値（Truth Value）}という
+\end{mysodef}
+
+真理値は$\mathrm{T}$と$\mathrm{F}$以外の記号を用いることで$\mathrm{T}$または$\mathrm{F}$を代表することができます。
+これは簡単に言えば代入のことですが、同時に両方を表すことはできません。
+（シュレディンガーの猫みたいなことはここでは認めません。）
+例えば記号$p$を用いて$\mathrm{T}$を代表することができます。\\
+このことも定義しておきましょう。
+
+\begin{mysodef}{真理変数}{truthvariable}
+	記号$p$が真理値$\mathrm{T}$を代表するとき
+	\begin{center}
+		$p=\mathrm{T}$\quad{}または\quad{}$\mathrm{T}=p$\\
+	\end{center}
+	と書き、記号$p$が真理値$\mathrm{F}$を代表するとき
+	\begin{center}
+		$p=\mathrm{F}$\quad{}または\quad{}$\mathrm{F}=p$\\
+	\end{center}
+	と書く\\
+	記号$p$が真理値$\mathrm{T}$または$\mathrm{F}$を代表しているとき、
+	すなわち$p=\mathrm{T}$または$p=\mathrm{F}$であるとき、\\
+	$p$を\textbf{真理変数（Truth Variable）}という\\
+	ただし、$p$が真理値以外も代表しうる場合を除く
+\end{mysodef}
+最後の１行は「$p$は$U$を代表する」というようなことはなく、$\mathrm{T}$か$\mathrm{F}$のみを代表するということを意味しています。
+
+ここで注意すべき点は、いま定めたのはただの記号であるということです。\\
+$\mathrm{T}$ を見ても「これは真だ」という他に何もないということですね。
+\pagebreak
+
+\paragraph*{等しいということ} 
+さすがに何もないのはかわいそうですから、次に、真理値に対して等しい・等しくないという関係を定義しましょう。
+
+\begin{mysodef}{真理変数の等価性}{truthvalueequality}
+	2つの真理変数$p$と$q$があるとき、\\
+	$p$と$q$がどちらも同じ真理値を代表しているとき、\\
+	$p$と$q$は\textbf{等価である（Equal）}といい、このとき$p=q$と書く\\
+	また、$p$と$q$がお互いに異なる真理値を代表しているとき、\\
+	$p$と$q$は\textbf{等価でない（Not Equal）}といい、このとき$p\ne{}q$と書く\\
+	上記の真理変数$p$と$q$の関係をまとめて$p$と$q$の\textbf{等価性}という
+\end{mysodef}
+上記のことは真理変数の代表しうる真理値を書き並べて考えるとわかりやすくなります。\\
+（当たり前なことが成り立つように決めただけとも見れますね。）
+\begin{table}[htbp]
+	\caption{真理変数の等価性}
+	\label{tb:truthvalueequality}
+	\centering
+	\begin{tabular}{|c|c|c|}
+		\hline
+		$p$ & $q$ & $pとqの等価性$ \\
+		\hline\hline
+		$\mathrm{T}$ & $\mathrm{T}$ & $p=q$ \\
+		\hline
+		$\mathrm{T}$ & $\mathrm{F}$ & $p\ne{}q$ \\
+		\hline
+		$\mathrm{F}$ & $\mathrm{T}$ & $p\ne{}q$ \\
+		\hline
+		$\mathrm{F}$ & $\mathrm{F}$ & $p=q$ \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\section{真理変数の否定、和、積}
+ここまでで、真理値とそれを代表する真理変数、およびその等価性を定義しました。
+（専門家の方からすれば穴だらけでしょうけれど。）\\
+\paragraph*{真理変数の否定、和、積}
+次に否定を定義します。とっても簡単ですよ。
+
+\begin{mysodef}{真理変数の否定}{truthvariablenegation}
+	真理変数$p$の\textbf{否定（Negation）}とは\\
+	$p=\mathrm{T}$のとき$\mathrm{F}$を代表し、$p=\mathrm{F}$のとき$\mathrm{T}$を代表する真理変数であり\\
+	記号$\neg{}p$または$\bar{p}$を用いて表す
+\end{mysodef}
+注意点ですが、$\neg{}p$はこれ一つで1つの記号です。
+（日本語でも「か」に「゛」をつけて１つの記号「が」にしますよね。）
+記号$\neg{}p$は「ノット$p$」、$\bar{p}$は「$p$バー」と読むことが多いようです。\\
+ここで（つまらないかもしれませんが）例を見てみましょう。
+\begin{mysoeg}{真理変数の否定}{truthvariablenegation}
+	$p=\mathrm{F}$であるとき$\neg{}p=\mathrm{T}$であり$\neg{}p\ne{}\mathrm{F}$である\\
+	$p=\mathrm{T}$であるとき$\neg{}p=\mathrm{F}$である$\neg{}p\ne{}\mathrm{T}$である
+\end{mysoeg}
+否定という名前らしく、$\mathrm{T}$なら$\mathrm{F}$、$\mathrm{F}$なら$\mathrm{T}$となる真理変数です。\\
+\pagebreak
+次のように、真理変数の真理値ごとに作った表を\textbf{真理値表}といいます。
+\begin{table}[htbp]
+	\caption{真理変数の否定}
+	\label{tb:truthvariablenegation}
+	\centering
+	\begin{tabular}{|c|c|}
+		\hline
+		$p$ & $\neg{}p$ \\
+		\hline\hline
+		$\mathrm{T}$ & $\mathrm{F}$ \\
+		\hline
+		$\mathrm{F}$ & $\mathrm{T}$ \\
+		\hline
+	\end{tabular}
+\end{table}
+
+では引き続いて論理和と論理積というものを定義します。
+
+\begin{mysodef}{真理変数の論理和}{logicaldisjunction}
+	真理変数$p$と$q$の\textbf{論理和・選言（Logical Disjunction）}とは\\
+	$p$と$q$のうち、どちらか一方または両方が$\mathrm{T}$を代表するとき$\mathrm{T}$を代表し、
+	$p$と$q$の両方が$\mathrm{F}$を代表するとき$\mathrm{F}$を代表する真理変数であり\\
+	記号$p\lor{}q$を用いて表す
+\end{mysodef}
+記号$p\lor{}q$は「$p$オア$q$」「$p$または$q$」などと読むことが多いようです。\\
+
+\begin{mysodef}{真理変数の論理積}{logicalconjunction}
+	真理変数$p$と$q$の\textbf{論理積・連言（Logical Conjunction）}とは\\
+	$p$と$q$のうち、どちらか一方または両方が$\mathrm{F}$を代表するとき$\mathrm{F}$を代表し、
+	$p$と$q$の両方が$\mathrm{T}$を代表するとき$\mathrm{T}$を代表する真理変数であり\\
+	記号$p\land{}q$を用いて表す
+\end{mysodef}
+記号$p\land{}q$は「$p$アンド$q$」「$p$かつ$q$」などと読むことが多いようです。\\
+（たまに「または」「かつ」を漢字でカッコよく書く方がいますが、偉い人にたまに注意されるのでひらがながおすすめです。）
+
+\begin{table}[htbp]
+	\caption{論理和と論理積の真理値表}
+	\label{tb:lorlandtruthtable}
+	\centering
+	\begin{tabular}{|c|c|c|c|}
+		\hline
+		$p$ & $q$ & $p\lor{}q$ & $p\land{}q$ \\
+		\hline\hline
+		$\mathrm{T}$ & $\mathrm{T}$ & $\mathrm{T}$ & $\mathrm{T}$\\
+		\hline
+		$\mathrm{T}$ & $\mathrm{F}$ & $\mathrm{T}$ & $\mathrm{F}$\\
+		\hline
+		$\mathrm{F}$ & $\mathrm{T}$ & $\mathrm{T}$ & $\mathrm{F}$\\
+		\hline
+		$\mathrm{F}$ & $\mathrm{F}$ & $\mathrm{F}$ & $\mathrm{F}$\\
+		\hline
+	\end{tabular}
+\end{table}
+
+このあたりから難しくなってきます。例題で整理しておきましょう。
+\begin{mysoegpb}{真理変数の論理和と論理積}{landlor}
+\begin{enumerate}
+	\item $p\lor{}q=\mathrm{F}$であるとき、$p$および$q$が代表する真理値を答えよ
+	\item $p\land{}q=\mathrm{T}$であるとき、$p$および$q$が代表する真理値を答えよ
+\end{enumerate}
+\tcblower
+解答
+\begin{enumerate}
+	\item $p\lor{}q=\mathrm{F}$となるのは定義\ref*{def:logicaldisjunction}から$p=\mathrm{F}$であり$q=\mathrm{F}$であるときである
+	\item $p\land{}q=\mathrm{T}$となるのは定義\ref*{def:logicalconjunction}から$p=\mathrm{T}$であり$q=\mathrm{T}$であるときである
+\end{enumerate}
+\end{mysoegpb}
+
+\pagebreak{}
+
+\paragraph*{真理関数}
+数式や記号が複雑に書かれているとき、人はそれをできるだけ簡単に書き直したくなるものです。
+真理変数という記号たちも、上で述べた否定、論理和、論理積として組み合わされ、新しい真理変数が生み出されます。
+これは簡単にしなければなりません。そのために真理関数という、未知の真理変数を含んだものについて考えます。
+
+\begin{mysodef}{真理関数}{truthfunction}
+	ある真理変数の真偽値がわからない（つまりどちらも取りうる）とき、\\
+	このことを強調するためにその真理変数を\textbf{未知の真理変数}と呼ぶ\\
+	1つ以上の未知の真理変数$p_1, p_2, ..., p_n$とそれらの否定による、論理和または論理積またはその組み合わせで表された真理変数を（n変数の）\textbf{真理関数（Truth Function）}といい、
+	論理関数の、論理変数としての記号が$f$のとき、未知の真理変数を明示して$f(p_1, p_2, ..., p_n)$と表す\\
+	真理関数を具体的に表すために、等号（$=$）の左右に$f(p_1, p_2, ..., p_n)$と真理変数を並べて表現する\\
+	真理関数のすべての未知の真理変数$p_i$が$p_i=\mathrm{T}$または$p_i=\mathrm{F}$と定まったとき\textbf{真理関数は評価された}といい、
+	そのときの真理関数が代表する真理値を真理関数の\textbf{評価値}あるいは\textbf{戻り値・返り値}\textbf{結果}などという\\
+	2つの（n変数の）真理関数$f(p_1,...,p_n)$と$g(p_1,...,p_n)$は、すべての真理変数のパターンについて真理関数の戻り値が等しいとき等価であるという
+\end{mysodef}
+これは簡単に言うと、今まで述べてきた否定、論理和、論理積の組み合わせ（例えば$\neg{}p\lor{}q$）に新しい名前（例えば$f$）を付けたものです。
+そしてこのことを例えば$f(p,q)=\neg{}p\lor{}q$というように書く、ということです。\\
+$f(p,q)=\neg{}p\lor{}q$について$p=\mathrm{T},q=\mathrm{F}$なら、$f(p,q)=F$となります。
+いま例として$f(p,q)=\neg{}p\lor{}q$と書きましたが、$\neg{}p\lor{}q$の否定は$p$についています。
+つまり$f(p,q)=(\neg{}p)\lor{}q$ということです。覚えておきましょう。\\
+
+\pagebreak
+
+\paragraph*{ド・モルガンの法則}
+ここでようやく目的の定理にたどり着きました。
+集合論などでも用いられる非常に重要な定理です。
+\begin{mysothm}{ド・モルガンの法則}{demorganslaws}
+	論理変数$p$と$q$があるとき、次が成り立つ
+	\[
+	\begin{aligned}
+		\neg{}(p\lor{}q)=\neg{}p\land{}\neg{}q
+		\\
+		\neg{}(p\land{}q)=\neg{}p\lor{}\neg{}q
+	\end{aligned}
+	\]
+	\begin{mysoproof}{ド・モルガンの法則}{demorganslawspf}
+		\begin{minipage}[h]{0.60\linewidth}
+			$\neg{}(p\lor{}q)$と$\neg{}p\land{}\neg{}q$それぞれについて真理値表を書くと表\ref*{figfordemorganslawspf}（1）のようになる
+		\end{minipage}
+		\begin{minipage}[h]{0.45\linewidth}
+			\label{figfordemorganslawspf}
+			
+			\begin{tabular}{|c|c|c|c|}
+				\multicolumn{4}{c}{表\ref*{figfordemorganslawspf}（1）}\\
+				\hline
+				$p$ & $q$ & $\neg{}(p\lor{}q)$ & $\neg{}p\land{}\neg{}q$ \\
+				\hline\hline
+				$\mathrm{T}$ & $\mathrm{T}$ & $\mathrm{F}$ & $\mathrm{F}$\\
+				\hline
+				$\mathrm{T}$ & $\mathrm{F}$ & $\mathrm{F}$ & $\mathrm{F}$\\
+				\hline
+				$\mathrm{F}$ & $\mathrm{T}$ & $\mathrm{F}$ & $\mathrm{F}$\\
+				\hline
+				$\mathrm{F}$ & $\mathrm{F}$ & $\mathrm{T}$ & $\mathrm{T}$\\
+				\hline
+			\end{tabular}
+		\end{minipage}
+		\\
+		表\ref*{figfordemorganslawspf}（1）から$\neg{}(p\lor{}q)$と$\neg{}p\land{}\neg{}q$は真理変数$p$と$q$が何を代表していても等価である\\
+		ゆえに
+		\begin{center}
+		$\neg{}(p\lor{}q)=\neg{}p\land{}\neg{}q$ \\
+		\end{center}
+		\tcblower
+		\begin{minipage}[h]{0.60\linewidth}
+			$\neg{}(p\land{}q)$と$\neg{}p\lor{}\neg{}q$それぞれについて真理値表を書くと表\ref*{figfordemorganslawspf2}（2）のようになる
+		\end{minipage}
+		\begin{minipage}[h]{0.45\linewidth}
+			\label{figfordemorganslawspf2}
+			
+			\begin{tabular}{|c|c|c|c|}
+				\multicolumn{4}{c}{表\ref*{figfordemorganslawspf2}（2）}\\
+				\hline
+				$p$ & $q$ & $\neg{}(p\land{}q)$ & $\neg{}p\lor{}\neg{}q$ \\
+				\hline\hline
+				$\mathrm{T}$ & $\mathrm{T}$ & $\mathrm{F}$ & $\mathrm{F}$\\
+				\hline
+				$\mathrm{T}$ & $\mathrm{F}$ & $\mathrm{T}$ & $\mathrm{T}$\\
+				\hline
+				$\mathrm{F}$ & $\mathrm{T}$ & $\mathrm{T}$ & $\mathrm{T}$\\
+				\hline
+				$\mathrm{F}$ & $\mathrm{F}$ & $\mathrm{T}$ & $\mathrm{T}$\\
+				\hline
+			\end{tabular}
+		\end{minipage}
+		\\
+		表\ref*{figfordemorganslawspf2}（2）から$\neg{}(p\land{}q)$と$\neg{}p\lor{}\neg{}q$は真理変数$p$と$q$が何を代表していても等価である\\
+		ゆえに
+		\begin{center}
+			$\neg{}(p\land{}q)=\neg{}p\lor{}\neg{}q$\\
+		\end{center}
+	\end{mysoproof}
+
+\end{mysothm}
+
+\end{document}
